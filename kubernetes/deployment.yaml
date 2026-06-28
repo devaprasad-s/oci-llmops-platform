@@ -18,6 +18,9 @@ spec:
       - name: manifest-doc-container
         imagePullPolicy: Never
         image: manifest-doctor:latest
+        env:
+        - name: OLLAMA_HOST
+          value: "http://10.42.0.1:11434"
         resources:
           requests:
             memory: 250Mi
