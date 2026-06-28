@@ -16,7 +16,7 @@ class ManifestDoctorRAG:
         
         # 3. Connect to the local Ollama instance running Phi-3
         print("Connecting to local Ollama (Phi-3)...")
-        self.llm = OllamaLLM(model="phi3")
+        self.llm = OllamaLLM(model="phi3", temperature=0)
 
     def load_knowledge_base(self):
         print("Loading internal policies into Vector Database...")
@@ -44,8 +44,8 @@ class ManifestDoctorRAG:
         
         # 2. Augment: Construct the prompt with our retrieved context
         prompt_template = """
-        You are a Senior Kubernetes Platform Engineer. 
-        Analyze the following broken Kubernetes YAML manifest using ONLY the provided Internal Policies.
+        You are a strict Kubernetes Platform Engineer. 
+        Analyze the broken Kubernetes YAML manifest using ONLY the provided Internal Policies.
         
         Internal Policies:
         {context}
@@ -53,7 +53,10 @@ class ManifestDoctorRAG:
         Broken YAML:
         {yaml}
         
-        Explain why the YAML is broken based on the policies, and provide the corrected YAML.
+        INSTRUCTIONS:
+        1. Identify the exact error in 1 sentence.
+        2. Provide ONLY the corrected YAML.
+        3. Do NOT explain anything else. Do NOT generate additional related resources (like Services or Ingresses).
         """
         
         prompt = PromptTemplate(
