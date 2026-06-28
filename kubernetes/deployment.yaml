@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manifest-doc-deployment
+  labels:
+    app: manifest-doc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: manifest-doc
+  template:
+    metadata:
+      labels:
+        app: manifest-doc
+    spec:
+      containers:
+      - name: manifest-doc-container
+        imagePullPolicy: Never
+        image: manifest-doctor:latest
+        resources:
+          requests:
+            memory: 250Mi
+          limits:
+            memory: 1Gi
+        ports:
+        - containerPort: 8000

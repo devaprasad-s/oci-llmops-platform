@@ -1,0 +1,7 @@
+# Ignore unencrypted Kubernetes secrets
+*secret*.yaml
+*secret*.yml
+
+# Ignore local cluster configurations
+kubeconfig
+*.kubeconfig
