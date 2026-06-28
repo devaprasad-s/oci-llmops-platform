@@ -19,7 +19,6 @@ class ManifestDoctorRAG:
         ollama_url = os.getenv("OLLAMA_HOST", "http://localhost:11434")
         print(f"Connecting to Ollama at {ollama_url}...")
         self.llm = OllamaLLM(model="phi3", temperature=0, base_url=ollama_url)
-        self.llm = OllamaLLM(model="phi3", temperature=0)
 
     def load_knowledge_base(self):
         print("Loading internal policies into Vector Database...")
