@@ -3,6 +3,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
+import os
 
 class ManifestDoctorRAG:
     def __init__(self):
@@ -15,8 +16,9 @@ class ManifestDoctorRAG:
         self.vectorstore = Chroma(embedding_function=self.embeddings)
         
         # 3. Connect to the local Ollama instance running Phi-3
-        # Added temperature=0 to make the model deterministic and stop it from rambling
-        print("Connecting to local Ollama (Phi-3)...")
+        ollama_url = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+        print(f"Connecting to Ollama at {ollama_url}...")
+        self.llm = OllamaLLM(model="phi3", temperature=0, base_url=ollama_url)
         self.llm = OllamaLLM(model="phi3", temperature=0)
 
     def load_knowledge_base(self):
