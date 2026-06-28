@@ -6,20 +6,64 @@ from langchain_core.prompts import PromptTemplate
 
 class ManifestDoctorRAG:
     def __init__(self):
-        # 1. Initialize the HuggingFaceEmbeddings (use "all-MiniLM-L6-v2")
-        # 2. Initialize Chroma in ephemeral (in-memory) mode
-        # 3. Initialize the Ollama LLM pointing to model="phi3"
-        pass
+        # 1. Load the small, fast CPU-friendly embedding model
+        print("Initializing Embedding Model (MiniLM)...")
+        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        
+        # 2. Spin up an in-memory ChromaDB instance
+        print("Initializing Ephemeral ChromaDB...")
+        self.vectorstore = Chroma(embedding_function=self.embeddings)
+        
+        # 3. Connect to the local Ollama instance running Phi-3
+        print("Connecting to local Ollama (Phi-3)...")
+        self.llm = Ollama(model="phi3")
 
     def load_knowledge_base(self):
-        # 1. Create a list of hardcoded K8s rules (e.g., "Rule 1: Always use memory limits.")
-        # 2. Convert them into LangChain Document objects
-        # 3. Add them to your Chroma vector store
-        pass
+        print("Loading internal policies into Vector Database...")
+        # A list of strict rules we want our AI to enforce
+        rules = [
+            "Rule 1: All Kubernetes apps/v1 Deployments MUST have a 'selector' block that matches the template labels.",
+            "Rule 2: All containers should have memory and cpu limits defined to prevent OOM errors.",
+            "Rule 3: Ingress resources must specify an ingressClassName, typically 'nginx'.",
+            "Rule 4: Services must define a targetPort if it differs from the exposed port."
+        ]
+        
+        # Convert the strings into LangChain Document objects
+        docs = [Document(page_content=rule) for rule in rules]
+        
+        # Embed and store them in Chroma
+        self.vectorstore.add_documents(docs)
+        print("Knowledge Base successfully loaded!")
 
     def diagnose_manifest(self, broken_yaml: str) -> str:
-        # 1. Search Chroma for the top 2 rules related to the broken_yaml
-        # 2. Construct a PromptTemplate instructing Phi-3 to act as an SRE, 
-        #    giving it the rules and the broken_yaml.
-        # 3. Pass the prompt to Ollama and return the string response.
-        pass
+        # 1. Retrieve: Find the 2 rules that are most mathematically similar to the broken YAML
+        relevant_docs = self.vectorstore.similarity_search(broken_yaml, k=2)
+        
+        # Extract just the text from the retrieved documents
+        context = "\n".join([doc.page_content for doc in relevant_docs])
+        
+        # 2. Augment: Construct the prompt with our retrieved context
+        prompt_template = """
+        You are a Senior Kubernetes Platform Engineer. 
+        Analyze the following broken Kubernetes YAML manifest using ONLY the provided Internal Policies.
+        
+        Internal Policies:
+        {context}
+        
+        Broken YAML:
+        {yaml}
+        
+        Explain why the YAML is broken based on the policies, and provide the corrected YAML.
+        """
+        
+        prompt = PromptTemplate(
+            template=prompt_template,
+            input_variables=["context", "yaml"]
+        )
+        formatted_prompt = prompt.format(context=context, yaml=broken_yaml)
+        
+        # 3. Generate: Send it to Phi-3 and get the answer
+        print("Sending prompt to Phi-3...")
+        response = self.llm.invoke(formatted_prompt)
+        
+        return response
