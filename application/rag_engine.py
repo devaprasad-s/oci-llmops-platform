@@ -15,6 +15,7 @@ class ManifestDoctorRAG:
         self.vectorstore = Chroma(embedding_function=self.embeddings)
         
         # 3. Connect to the local Ollama instance running Phi-3
+        # Added temperature=0 to make the model deterministic and stop it from rambling
         print("Connecting to local Ollama (Phi-3)...")
         self.llm = OllamaLLM(model="phi3", temperature=0)
 
@@ -42,7 +43,7 @@ class ManifestDoctorRAG:
         # Extract just the text from the retrieved documents
         context = "\n".join([doc.page_content for doc in relevant_docs])
         
-        # 2. Augment: Construct the prompt with our retrieved context
+        # 2. Augment: Construct the prompt with strict structural constraints
         prompt_template = """
         You are a strict Kubernetes Platform Engineer. 
         Analyze the broken Kubernetes YAML manifest using ONLY the provided Internal Policies.
@@ -53,10 +54,15 @@ class ManifestDoctorRAG:
         Broken YAML:
         {yaml}
         
-        INSTRUCTIONS:
-        1. Identify the exact error in 1 sentence.
-        2. Provide ONLY the corrected YAML.
-        3. Do NOT explain anything else. Do NOT generate additional related resources (like Services or Ingresses).
+        You must reply using EXACTLY this format and nothing else. Stop generating after the YAML:
+        
+        ERROR: 
+        [1 sentence explanation]
+        
+        CORRECTED YAML:
+        ```yaml
+        [Corrected YAML here]
+        ```
         """
         
         prompt = PromptTemplate(
