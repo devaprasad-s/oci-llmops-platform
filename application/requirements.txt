@@ -4,3 +4,6 @@ langchain
 langchain-community
 chromadb
 sentence-transformers
+langchain-huggingface
+langchain-chroma
+langchain-ollama

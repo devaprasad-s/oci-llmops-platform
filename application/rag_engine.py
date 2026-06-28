@@ -1,6 +1,6 @@
-from langchain_community.llms import Ollama
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_ollama import OllamaLLM
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 
@@ -16,7 +16,7 @@ class ManifestDoctorRAG:
         
         # 3. Connect to the local Ollama instance running Phi-3
         print("Connecting to local Ollama (Phi-3)...")
-        self.llm = Ollama(model="phi3")
+        self.llm = OllamaLLM(model="phi3")
 
     def load_knowledge_base(self):
         print("Loading internal policies into Vector Database...")
