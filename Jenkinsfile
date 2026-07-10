@@ -6,11 +6,11 @@ pipeline {
 			   withCredentials([string(credentialsId:'ai-private-ip', variable:'AI_PRIVATE_IP')]){
 				    sshagent(credentials: ['ai-node-ssh-key']) {
 						sh '''
-						ssh -o StrictHostKeyChecking=no ubuntu@$AI_PRIVATE_IP <<'EOF'
+						ssh -o StrictHostKeyChecking=no ubuntu@$AI_PRIVATE_IP "sudo bash -s" <<'EOF'
 						set -e
 						
 						echo "Pulling latest code..."
-						cd oci-llmops-platform/
+						cd ~/oci-llmops-platform/
 						git pull origin
 						
 						echo "Building native ARM image..."
