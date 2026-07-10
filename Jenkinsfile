@@ -5,7 +5,7 @@ pipeline {
            steps {
 		    sshagent(credentials: ['ai-node-ssh-key']) {
 		      sh '''
-			  ssh -o StrictHostKeyChecking=no ubuntu@10.0.1.52 << 'EOF'
+			  ssh -o StrictHostKeyChecking=no ubuntu@PRIVATE-IP << 'EOF'
 			     set -e #stops the process if any command fails
 			     
 			     echo "Pulling latest code..."
