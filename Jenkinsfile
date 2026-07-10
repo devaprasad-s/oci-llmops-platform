@@ -8,7 +8,7 @@ pipeline {
 				      sh '''
 					  ssh -o StrictHostKeyChecking=no ubuntu@$AI_PRIVATE_IP << 'EOF'
 					     set -e #stops the process if any command fails
-					     pwd
+					     sudo -i
 					     echo "Pulling latest code..."
 					     cd oci-llmops-platform/
 					     git pull origin
