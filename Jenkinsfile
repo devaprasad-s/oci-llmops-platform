@@ -26,8 +26,7 @@ pipeline {
 						sudo kubectl apply -f kubernetes/
 						sudo kubectl rollout restart deployment manifest-doc-deployment
 						
-						echo "Deployment successful!"
-						EOF
+						echo "Deployment successful!"EOF
 						'''
 			       }
 			    }
