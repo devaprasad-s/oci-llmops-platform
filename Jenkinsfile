@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Deploy') {
            steps {
-			   withCredentials([string(credentialsID:'ai-private-ip', variable:'AI_PRIVATE_IP')]){
+			   withCredentials([string(credentialsId:'ai-private-ip', variable:'AI_PRIVATE_IP')]){
 				    sshagent(credentials: ['ai-node-ssh-key']) {
 				      sh '''
 					  ssh -o StrictHostKeyChecking=no ubuntu@$AI_PRIVATE_IP << 'EOF'
