@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Ingress
+metadata:
+  name: manifest-doc-ingress
+spec:
+  ingressClassName: manifest-doc-ingress
+  rules:
+  - http:
+      paths:
+      - path: /ai
+        pathType: Prefix
+        backend:
+          service:
+            name: manifest-doc-ai
+            port:
+              number: 80
