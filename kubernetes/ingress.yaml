@@ -1,16 +1,15 @@
-apiVersion: apps/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: manifest-doc-ingress
 spec:
-  ingressClassName: manifest-doc-ingress
   rules:
   - http:
       paths:
-      - path: /ai
+      - path: /
         pathType: Prefix
         backend:
           service:
-            name: manifest-doc-ai
+            name: manifest-doc-service
             port:
               number: 80
