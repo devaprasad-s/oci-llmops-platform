@@ -37,19 +37,19 @@ The application utilizes an ephemeral Vector Database to ground the LLM's respon
 **Request:**
 
 ```
-curl \-X POST http://\<NODE\_PUBLIC\_IP\>/diagnose/yaml \\  
-\-H "Content-Type: application/json" \\  
-\-d '{  
-  "yaml\_content": "apiVersion: apps/v1\\nkind: Deployment\\nmetadata:\\n  name: frontend\\nspec:\\n  replicas: 3\\n  template:\\n    metadata:\\n      labels:\\n        app: frontend\\n    spec:\\n      containers:\\n      \- name: nginx\\n        image: nginx:latest"  
+curl -X POST http://<NODE_PUBLIC_IP>/diagnose/yaml \
+-H "Content-Type: application/json" \
+-d '{
+  "yaml_content": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: frontend\nspec:\n  replicas: 3\n  template:\n    metadata:\n      labels:\n        app: frontend\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:latest"
 }'
 ```
 
 **Response (Generated via local Phi-3 contextually grounded by RAG):**
 
 ```
-{  
-  "diagnosis": "ERROR: The Deployment manifest lacks a 'selector' block that matches the template labels.\\n\\nCORRECTED YAML:\\n\`\`\`yaml\\napiVersion: apps/v1\\nkind: Deployment\\nmetadata:\\n  name: frontend\\nspec:\\n  replicas: 3\\n  selector:\\n    matchLabels:\\n      app: frontend\\n  template:\\n    metadata:\\n      labels:\\n        app: frontend\\n    spec:\\n      containers:\\n      \- name: nginx\\n        image: nginx:latest\\n\`\`\`",  
-  "response\_time\_seconds": 46.358  
+{
+  "diagnosis": "ERROR: The Deployment manifest lacks a 'selector' block that matches the template labels.\n\nCORRECTED YAML:\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: frontend\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: frontend\n  template:\n    metadata:\n      labels:\n        app: frontend\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:latest\n```",
+  "response_time_seconds": 46.358
 }
 ```
 
